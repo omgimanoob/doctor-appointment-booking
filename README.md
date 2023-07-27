@@ -1,7 +1,5 @@
 ## Description
 
-
-
 <ol>
   <li>Implementing a feature where a patient can book an appointment with a specific doctor by selecting an available timeslot.</li>
   <li>Incorporating pre-defined events into the timeslots. These events are of three types: specific, alternate, and repeat.
@@ -31,6 +29,38 @@
 $ npm install
 ```
 
+## change mysql database credentials in src/app.module.ts
+```
+@Module({
+  imports: [
+    TypeOrmModule.forRoot({
+      ...
+      username: 'root', //change this
+      password: '', //change this
+      database: 'doctor_appointment_booking', //change this
+      ...
+    }),
+  ],
+})
+```
+
+## change mysql database credentials in /ormconfig.json
+```
+{
+    ...
+    "username": "root", 
+    "password": "", 
+    "database": "doctor_appointment_booking",
+    ...
+}
+```
+
+## insert dummy data
+```bash
+$ npm run seed
+```
+
+
 ## Running the app
 
 ```bash
@@ -42,17 +72,4 @@ $ npm run start:dev
 
 # production mode
 $ npm run start:prod
-```
-
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
 ```

@@ -1,0 +1,16 @@
+{
+    "type": "mysql",
+    "host": "localhost",
+    "port": 3306,
+    "username": "root", 
+    "password": "", 
+    "database": "doctor_appointment_booking",
+    "entities": [
+        "src/doctor/doctor.ts",
+        "src/appointment/appointment.ts",
+        "src/alternate-event/alternate-event.ts",
+        "src/specific-event/specific-event.ts",
+        "src/repeat-event/repeat-event.ts"
+      ],
+    "synchronize": true
+}
