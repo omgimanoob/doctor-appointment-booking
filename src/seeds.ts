@@ -10,9 +10,9 @@ async function seed() {
   , today = new Date()
   , doctorRepo = connection.getRepository(Doctor)
   , doctorEntities = [
-        { name: 'Dr Wong' },
-        { name: 'Dr Smith' },
-        { name: 'Dr Fatimah' },
+        { name: 'Dr Wong', specialty: 'Dermatology' },
+        { name: 'Dr Smith', specialty: 'Oncology' },
+        { name: 'Dr Fatimah', specialty: 'Gynaecology' },
     ]
   , otherSeeds = [
     // {

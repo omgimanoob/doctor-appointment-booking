@@ -4,6 +4,7 @@ import { Doctor } from './doctor/doctor';
 import { SpecificEvent } from './specific-event/specific-event'; 
 import { AlternateEvent } from './alternate-event/alternate-event'; 
 import { RepeatEvent } from './repeat-event/repeat-event'; 
+import { DoctorModule } from './doctor/doctor.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { RepeatEvent } from './repeat-event/repeat-event';
       entities: [Doctor, SpecificEvent, AlternateEvent, RepeatEvent],
       synchronize: true,
     }),
+    DoctorModule,
   ],
 })
 export class AppModule {}
