@@ -10,7 +10,7 @@ export class Appointment {
   timeStart: Date;
 
   @Column()
-  duration: number;
+  duration: number = 30
 
   // @ManyToOne (()=>Doctor,(doctor)=>doctor.appointments)
   // doctor: Doctor;

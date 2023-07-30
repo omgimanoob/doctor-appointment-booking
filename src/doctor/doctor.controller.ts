@@ -49,20 +49,29 @@ export class DoctorController {
     return this.service.remove(id);
   }
 
+
   // Create an appointment for a doctor
   @Post(':id/appointments')
   async createAppointment(@Param('id') doctorId: number, @Body() data: Partial<Appointment>): Promise<Appointment | any> {
     try {
-      const appointment = await this.appointmentService.createAppointment(doctorId, data);
-      return appointment;
+      const appointment = await this.appointmentService.createAppointment(doctorId, data)
+      return appointment
     } catch (error) {
       throw new HttpException(error.message, (error instanceof NotFoundException) ? HttpStatus.NOT_FOUND : HttpStatus.BAD_REQUEST);
     }
-    
-   
-
-   
   }
+
+    // Retrieve all appointment slots for a doctor
+    @Get(':id/slots')
+    async getSlots(@Param('id') doctorId: number): Promise<any> {
+      try {
+        const slots = await this.appointmentService.getSlots(doctorId)
+        return slots
+      } catch (error) {
+        throw new HttpException(error.message, (error instanceof NotFoundException) ? HttpStatus.NOT_FOUND : HttpStatus.BAD_REQUEST);
+      }
+    }
+
 
   // Retrieve all appointments for a doctor
   @Get(':id/appointments')

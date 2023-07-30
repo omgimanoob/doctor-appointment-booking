@@ -52,7 +52,8 @@ $ npm run build
 
 ```bash
 # development
-$ npm run start -- -b swc
+# $ npm run start -- -b swc
+$ npm run start
 
 # watch mode
 $ npm run start:dev
@@ -62,6 +63,16 @@ $ npm run start:prod
 ```
 ## open with browser
 [http://localhost:3000/](http://localhost:3000/)
+
+## Book appointment with postman:
+[https://documenter.getpostman.com/view/17726783/2s9Xxtxuw5](https://documenter.getpostman.com/view/17726783/2s9Xxtxuw5)
+```
+POST localhost:3000/api/doctors/1/appointments
+{
+  "timeStart": "2023-07-31 15:00:00"
+}
+
+```
 
 # Description
 

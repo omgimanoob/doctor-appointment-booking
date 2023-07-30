@@ -18,9 +18,9 @@ export class Doctor {
 
 
 @Column()
-minsPerSlot: number;
+minsPerSlot: number = 30
 @Column()
-  specialty: string;
+  specialty: string = ""
 }
 
     

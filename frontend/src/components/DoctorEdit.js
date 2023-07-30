@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 
 const DoctorEdit = ({ doctor, updateDoctor }) => {
-  const [name, setName] = useState(doctor.name);
-  const [specialty, setSpecialty] = useState(doctor.specialty);
+  // console.log(doctor.name)
+  // console.log(updateDoctor)
+  const [name, setName] = useState(doctor&&doctor.name?doctor.name:'');
+  const [specialty, setSpecialty] = useState(doctor&&doctor.specialty?doctor.specialty:'');
 
   const handleSubmit = (e) => {
     e.preventDefault();

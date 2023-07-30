@@ -85,38 +85,10 @@ function App() {
 
 
   return (
+    
     <div className="container mt-5">
       <h1 className="text-center mb-4">Doctor Appointment Booking</h1>
-      <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6">
-        {doctors.map((doctor) => (
-          <div key={doctor.id} className="col mb-4">
-            <div className="card h-100">
-              <div className="card-body">
-                <h5 className="card-title">{doctor.name}</h5>
-                <p className="card-text">Specialty: {doctor.specialty}</p>
-                <div className="d-flex justify-content-between">
-                  <button
-                    className="btn btn-primary"
-                    onClick={() => setEditDoctor(doctor)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="btn btn-danger"
-                    data-bs-toggle="modal"
-                    data-bs-target="#confirmDeleteModal"
-                    onClick={() => setEditDoctor(doctor)}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="text-center mt-4">
+      <div className="text-center my-4">
         <button
           className="btn btn-success"
           data-bs-toggle="modal"
@@ -126,13 +98,74 @@ function App() {
           Add Doctor
         </button>
       </div>
+      <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 justify-content-center">
+        {doctors.map((doctor) => (
+          <div key={doctor.id} className="col mb-4">
+            <div className="card h-100">
+              <div className="card-body">
+                <h5 className="card-title">{doctor.name||''}</h5>
+                <p className="card-text text-muted m-0">{doctor.specialty}</p>
+                <p className="card-text text-muted">{doctor.minsPerSlot} mins</p>
+    
+              </div>
+              <div class="card-footer">
+                <div className="d-flex justify-content-start">
+                  {/* <button
+                    className="btn btn-primary me-1"
+                    data-bs-toggle="modal"
+                    data-bs-target="#editDoctorModal"
+                    onClick={() => setEditDoctor(doctor)}
+                  >Edit</button> */}
+                  <button
+                    className="btn btn-danger"
+                    data-bs-toggle="modal"
+                    data-bs-target="#confirmDeleteModal"
+                    onClick={() => setEditDoctor(doctor)}
+                  >
+                    Delete
+                  </button>
+                </div>
+                </div>
+            </div>
+          </div>
+        ))}
+      </div>
 
-      {editDoctor && (
-        <>
-          {/* <DoctorEdit doctor={editDoctor} updateDoctor={updateDoctor} />
-          <DoctorDelete doctor={editDoctor} deleteDoctor={deleteDoctor} /> */}
-        </>
-      )}
+   
+
+
+      
+      {/* Edit Doctor Modal */}
+      <div
+        className="modal fade"
+        id="editDoctorModal"
+        tabIndex="-1"
+        role="dialog"
+        aria-labelledby="editDoctorModalLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog" role="document">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="editDoctorModalLabel">
+                Edit Doctor
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div className="modal-body">
+              <DoctorEdit doctor={editDoctor} updateDoctor={updateDoctor} />
+            </div>
+          </div>
+        </div>
+      </div>
+
 
       {/* Add Doctor Modal */}
       <div
@@ -167,12 +200,7 @@ function App() {
 
       {/* Confirm Delete Modal */}
       <div
-        className="modal fade"
-        id="confirmDeleteModal"
-        tabIndex="-1"
-        role="dialog"
-        aria-labelledby="confirmDeleteModalLabel"
-        aria-hidden="true"
+        className="modal fade" id="confirmDeleteModal" tabIndex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true"
       >
         <div className="modal-dialog" role="document">
           <div className="modal-content">

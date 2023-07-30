@@ -21,12 +21,62 @@ export class AppointmentService {
     @InjectRepository(Shift)
     private readonly shiftRepo: Repository<Shift>,
   ) {}
-  
-  shiftToSlots(shift: Partial<Shift>) : Slots {
-      let startTime = shift.startTime
+
+
+
+  shiftToSlots(shift: Partial<Shift>, doctor: Partial<Doctor>) : any {
+    const moment = require('moment');
+      let slots = []
+      , duration = doctor.minsPerSlot
+      , startTime = shift.startTime
+      , cumulativeTime = shift.startTime
       , endTime = shift.endTime
+      , inputFormat = "DD-MM-YYYY HH:mm:ss"
+      , anyDate = '31-07-1995'
+      , momentStart = moment(`${anyDate} ${startTime}`, inputFormat)
+      , momentEnd = moment(`${anyDate} ${endTime}`, inputFormat)
+      , shiftMins = momentEnd.diff(momentStart,'minutes')
+      , numSlots = Math.floor(shiftMins/duration)
+
+      // console.log(numSlots,shiftMins)
+
+      for (let i = numSlots; i > 0; i--) {
+        let slotStartMoment = moment(`${anyDate} ${cumulativeTime}`, inputFormat)
+        , slotEndMoment = moment(`${anyDate} ${cumulativeTime}`, inputFormat).add( duration,'minutes')
+        , slot = {
+          // number : i,
+          weekday : shift.weekday,
+          startTime : slotStartMoment.format('HH:mm:ss'),
+          endTime :  slotEndMoment.subtract(1,'seconds').format('HH:mm:ss'),
+        }
+        cumulativeTime = slotEndMoment.add(1,'seconds').format('HH:mm:ss')
+        slots.push(slot)
+      }
+      return slots
+  }
+
+  async getSlots(doctorId:number) {
+    const options: FindOneOptions<Doctor> = {
+      where: { id: doctorId },
+      relations: ['shifts'],
+    };
+    const doctor = await this.doctorRepo.findOne(options);
+    if (!doctor) {
+      throw new NotFoundException('Doctor not found');
+    }
+
+    let retVal = []
+    doctor.shifts.forEach((shift)=>{
+      let slots = this.shiftToSlots(shift, doctor)
+      slots.forEach((slot)=>{
+        retVal.push(slot)
+      })
+    })
+
+    return retVal
 
   }
+  
   
   async createAppointment(doctorId: number, data: Partial<Appointment>): Promise<Appointment> {
    
@@ -35,7 +85,8 @@ export class AppointmentService {
     } 
     const options: FindOneOptions<Doctor> = {
         where: { id: doctorId },
-        relations: ['appointments', 'shifts'],
+        // relations: ['appointments', 'shifts'],
+        relations: ['shifts'],
       };
     const doctor = await this.doctorRepo.findOne(options);
     if (!doctor) {
@@ -44,39 +95,58 @@ export class AppointmentService {
     data.duration = doctor.minsPerSlot
 
     const moment = require('moment');
-    let hours = moment(data.timeStart).format('HH:mm:ss')
-    , appointmentStart = moment(data.timeStart).toDate()
-    , appointmentEnd = moment(data.timeStart).add( doctor.minsPerSlot,'minutes').toDate()
-    , momentDateStart = moment(data.timeStart).format('YYYY/MM/DD HH:mm:ss')
-    , momentDateEnd = moment(data.timeStart).add( doctor.minsPerSlot,'minutes').format('YYYY/MM/DD HH:mm:ss')
-
-    // console.log(hours)
-    // console.log(momentDateStart,momentDateEnd)
-    const shift = doctor.shifts.find((s) => hours >= s.startTime && hours <= s.endTime);
+    let inputFormat = "DD-MM-YYYY HH:mm:ss"
+    , momentStart = moment(data.timeStart)
+    , date = momentStart.format('DD-MM-YYYY')
+    , hours = momentStart.format('HH:mm:ss')
+    , startOfDay = moment(`${date} 00:00:00`,inputFormat).toDate()
+    , endOfDay = moment(`${date} 23:59:59`,inputFormat).toDate()
+    , appointmentStart = momentStart.toDate()
+    , appointmentEnd = momentStart.add( doctor.minsPerSlot,'minutes').toDate()
+    , dayOfWeek = momentStart.day() //1-6: mon-sat, 0:sun
+    const shift = doctor.shifts.find(
+      (s) => hours >= s.startTime
+      && hours <= s.endTime
+      && dayOfWeek == s.weekday
+    );
     if (!shift) {
-      throw new Error('The appointment time is outside the doctor\'s shift');
+      throw new Error(`The appointment time is outside of ${doctor.name}'s shift`);
     }
-    // const existingAppointments = await this.repo
-    // .createQueryBuilder('appointment')
-    // .where('appointment.doctorId = :doctorId', { doctorId }) 
-    // .andWhere('appointment.timeStart BETWEEN :startDate AND :endDate', { momentDateStart, momentDateEnd })
-    // .getMany();
-
+    let slots = this.shiftToSlots(shift, doctor)
+  
 
     const existingAppointments = await this.repo.find({
       where: {
         doctor,
-        timeStart: Between(appointmentStart,appointmentEnd)
+        // timeStart: Between(appointmentStart,appointmentEnd),
+        timeStart: Between(startOfDay,endOfDay),
       },
     });
 
-    // console.log(existingAppointments)
-    if (existingAppointments.length) {
-      throw new Error('There is already an appointment scheduled for this doctor during the same time slot');
+
+    slots.forEach((slot)=>{
+      let slotStartMoment =  slot.momentObj = moment(`${date} ${slot.startTime}`,inputFormat)
+      , dateObj = slotStartMoment.toDate()
+      , appt = existingAppointments.find(
+        s => dateObj >= s.timeStart
+        && dateObj <= s.timeStart
+      )
+      slot.available = typeof appt === 'undefined'
+      slot.appointment = appt ?? null
+    })
+
+
+    let tryBookThisSlot = slots.find(
+        s => hours >= s.startTime
+        && hours <= s.endTime
+      )
+
+      console.log(hours,tryBookThisSlot)
+    if (!tryBookThisSlot.available) {
+      throw new Error(`An exlsiting appointment already scheduled for ${doctor.name} from ${tryBookThisSlot.startTime}-${tryBookThisSlot.endTime}` );
     }
 
-    // data.timeStart = new Date(`2000-07-31 ${data.timeStart}`)
-    data.timeStart =  moment(data.timeStart).toDate()
+    data.timeStart = tryBookThisSlot.momentObj.toDate()
 
     const newAppointment = this.repo.create({
       ...data,
