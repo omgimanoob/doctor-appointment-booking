@@ -2,7 +2,7 @@ import { Controller, Get, Post, Put, Delete, Param, Body, HttpException, HttpSta
 import { DoctorService } from './doctor.service';
 import { Doctor } from './doctor';
 
-@Controller('doctors')
+@Controller('api/doctors')
 export class DoctorController {
     
   constructor(private readonly service: DoctorService) {}
@@ -27,7 +27,7 @@ export class DoctorController {
   }
 
   @Put(':id')
-  async update(@Param('id') id: number, @Body() data: Doctor): Promise<void> {
+  async update(@Param('id') id: number, @Body() data: Doctor): Promise<Doctor> {
     const doctor = await this.service.findOneById(id);
     if (!doctor) {
       throw new HttpException('Doctor not found', HttpStatus.NOT_FOUND);
@@ -37,7 +37,9 @@ export class DoctorController {
     //   throw new HttpException('No changes to update', HttpStatus.NO_CONTENT);
     // }
 
-    await this.service.update(doctor, data);
+    const updatedDoctor =  this.service.update(doctor, data);
+
+    return updatedDoctor;
   }
 
   @Delete(':id')

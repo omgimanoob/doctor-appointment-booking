@@ -10,9 +10,16 @@ export class DoctorService {
     private readonly repo: Repository<Doctor>,
   ) {}
 
-  async create(doctorData: Partial<Doctor>): Promise<Doctor> {
-    const doctor = this.repo.create(doctorData);
-    return this.repo.save(doctor);
+  async create(data: Partial<Doctor>): Promise<Doctor> {
+    const obj = this.repo.create(data);
+    return this.repo.save(obj);
+  }
+
+  async update(obj: Doctor, newData: Doctor): Promise<Doctor> {
+    obj.name = newData.name;
+    obj.specialty = newData.specialty;
+    obj.minsPerSlot = newData.minsPerSlot;
+    return this.repo.save(obj);
   }
   
 
@@ -27,11 +34,7 @@ export class DoctorService {
     return this.repo.findOne(options);
   }
 
-  async update(doctor: Doctor, updatedDoctorData: Doctor): Promise<Doctor> {
-    doctor.name = updatedDoctorData.name;
-    doctor.specialty = updatedDoctorData.specialty;
-    return this.repo.save(doctor);
-  }
+
 
   async remove(id: number): Promise<boolean> {
     const deleteResult = await this.repo.delete(id);

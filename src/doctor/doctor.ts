@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
-// import { Appointment } from '../appointment/appointment';
+import { Appointment } from '../appointment/appointment';
+import { Shift } from '../shift/shift';
 
 @Entity()
 export class Doctor {
@@ -9,9 +10,17 @@ export class Doctor {
   @Column()
   name: string;
 
-//   @OneToMany(() => Appointment, appointment => appointment.doctor)
-//   appointments: Appointment[];
-    
+  @OneToMany(() => Appointment, appointment => appointment.doctor)
+  appointments: Appointment[];
+
+  @OneToMany(() => Shift, shift => shift.doctor)
+  shifts: Shift[];
+
+
+@Column()
+minsPerSlot: number;
 @Column()
   specialty: string;
 }
+
+    

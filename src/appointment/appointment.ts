@@ -1,29 +1,21 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
-
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne  } from 'typeorm';
+import { Doctor } from '../doctor/doctor'; 
 @Entity()
 export class Appointment {
+  
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'date' })
-  startDate: Date;
-
-  @Column({ type: 'date' })
-  endDate: Date;
-
-  @Column({ type: 'time' })
-  startTime: Date;
-
-  @Column({ type: 'int' })
-  doctor: number;
-
-  @Column({ type: 'time' })
-  endTime: Date;
+  @Column({ type: 'timestamp' })
+  timeStart: Date;
 
   @Column()
-  target: 'day' | 'week' | 'month';
+  duration: number;
 
-  @Column()
-  value: number;
+  // @ManyToOne (()=>Doctor,(doctor)=>doctor.appointments)
+  // doctor: Doctor;
+
+  @ManyToOne(() => Doctor, (doctor) => doctor.appointments, { eager: true }) 
+  doctor: Doctor;
 
 }
