@@ -72,9 +72,7 @@ export class AppointmentService {
         retVal.push(slot)
       })
     })
-
     return retVal
-
   }
   
   

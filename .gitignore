@@ -46,7 +46,7 @@ lerna-debug.log*
 /frontend/coverage
 
 # production
-/frontend/build
+#/frontend/build
 
 # misc
 /frontend/.DS_Store
