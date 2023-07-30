@@ -65,31 +65,89 @@ async function seed() {
   for (const doctor of savedDoctors) {
     let addMinutes = 0
     , today = new Date()
+    , shiftdate = new Date()
     today.setHours(9)
     today.setMinutes(0)
     today.setSeconds(0)
     today.setMilliseconds(0)
 
-    for (let i = 5; i > 0; i--) {
-      let shift = new Shift()
-      shift.doctor = doctor
-      shift.startTime = today
-      shift.endTime = today
-      shift.weekday = i
-      shiftEntities.push(shift)
+    for (let i = 1; i <= 5; i++) {
+      
+      let lunchDurationMins = 60
+      , lunchBreaks = [12,13] 
+      , lunchBreak = lunchBreaks[Math.floor(Math.random() * lunchBreaks.length)]
+      , goOpis = 9
+      , leaveOpis = 17
+      , thisDoctorShift = []
+
+      shiftdate.setHours(9)
+      shiftdate.setMinutes(0)
+      shiftdate.setSeconds(0)
+      shiftdate.setMilliseconds(0)
+
+      {
+        let shift = new Shift()
+        shift.weekday = i
+        shift.doctor = doctor
+        shiftdate.setHours(goOpis)
+        shift.startTime = new Date(shiftdate)
+        shiftdate.setHours(lunchBreak)
+        shift.endTime = new Date(shiftdate)
+        shiftEntities.push(shift)
+        thisDoctorShift.push(shift)
+      }
+
+      {
+        let shift = new Shift()
+        shift.weekday = i
+        shift.doctor = doctor
+        shiftdate.setHours(lunchBreak)
+        shift.startTime = new Date(shiftdate.getTime() + lunchDurationMins*60000)
+        shiftdate.setHours(leaveOpis)
+        shift.endTime = new Date(shiftdate)
+        shiftEntities.push(shift)
+        thisDoctorShift.push(shift)
+      }
     }
 
+    shiftEntities && await shiftRepo.save(shiftEntities)
+
     for (let i = 3; i > 0; i--) {
-      let today1 =  today = new Date(today.getTime() + addMinutes*60000)
-      , appt = new Appointment()
-      appt.timeStart = today1
-      appt.duration = doctor.minsPerSlot 
-      appt.doctor = doctor
-      appointmentEntities.push(appt)
-      addMinutes += i==1 ? doctor.minsPerSlot*2 :doctor.minsPerSlot //skip one slot
+      // let today1 =  today = new Date(today.getTime() + addMinutes*60000)
+      // , appt = new Appointment()
+      // appt.timeStart = today1
+      // appt.duration = doctor.minsPerSlot 
+      // appt.doctor = doctor
+      // appointmentEntities.push(appt)
+      // addMinutes += i==1 ? doctor.minsPerSlot*2 :doctor.minsPerSlot //skip one slot
+
+      // // Generate a random appointment time within the doctor's shifts
+      // const randomShiftIndex = Math.floor(Math.random() * doctorShifts.length);
+      // const randomShift = doctorShifts[randomShiftIndex];
+
+      // // Calculate the start and end time for the appointment (e.g., add 30 minutes to the shift start time)
+      // const appointmentStartTime = new Date(randomShift.startTime);
+      // appointmentStartTime.setMinutes(appointmentStartTime.getMinutes() + 30);
+      // const appointmentEndTime = new Date(appointmentStartTime);
+      // appointmentEndTime.setMinutes(appointmentEndTime.getMinutes() + 20);
+
+      // // Check if the appointment time falls within the doctor's shift
+      // if (
+      //   appointmentStartTime >= randomShift.startTime &&
+      //   appointmentEndTime <= randomShift.endTime
+      // ) {
+      //   // Create the appointment using the doctor's ID
+      //   const appointment = new Appointment();
+      //   appointment.timeStart = appointmentStartTime;
+      //   appointment.duration = 20;
+      //   appointment.doctor = doctor;
+
+      //   // Save the appointment to the database
+      //   await apointmentRepo.save(appointment);
+      // }
     }
   }
-  shiftEntities && await shiftRepo.save(shiftEntities)
+ 
   appointmentEntities && await apointmentRepo.save(appointmentEntities)
 
 

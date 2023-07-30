@@ -2,6 +2,7 @@ import { Injectable,NotFoundException  } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, FindOneOptions  } from 'typeorm';
 import { Shift } from './shift';
+import { Doctor } from '../doctor/doctor';
 
 @Injectable()
 export class ShiftService {
@@ -32,7 +33,12 @@ export class ShiftService {
     return this.repo.findOne(options);
   }
 
-
+  async findAllByDoctor(doctor: Doctor): Promise<Shift[]> {
+    console.log(doctor)
+    return this.repo.find({
+      where: { doctor: doctor },
+    });
+  }
 
   async remove(id: number): Promise<boolean> {
     const deleteResult = await this.repo.delete(id);
