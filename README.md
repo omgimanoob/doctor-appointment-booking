@@ -1,18 +1,19 @@
 # Installation
 
-## Install dependencies for nestjs
+## Step 1. Install dependencies for nestjs
 
 ```bash
 $ npm install
 ```
 
-## Install dependencies for react - run inside the "frontend" folder
+## Step 2. Install dependencies for react - run inside the "frontend" folder
 
 ```bash
+$ cd frontend
 $ npm install
 ```
 
-## change mysql database credentials in src/app.module.ts
+## Step 3. change mysql database credentials in src/app.module.ts
 ```
 @Module({
   imports: [
@@ -27,7 +28,7 @@ $ npm install
 })
 ```
 
-## change mysql database credentials in /ormconfig.json
+## Step 4. change mysql database credentials in /ormconfig.json
 ```
 {
     ...
@@ -38,17 +39,18 @@ $ npm install
 }
 ```
 
-## insert dummy data
+## Step 5. Insert dummy data to mysql
 ```bash
 $ npm run seed
 ```
 
-## build web files at the "frontend" folder
+## Step 6. build web files at the "frontend" folder
 ```bash
+$ cd frontend
 $ npm run build
 ```
 
-## Running the app
+## Step 7. Running the app
 
 ```bash
 # development
@@ -61,10 +63,10 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
-## open with browser
+## Step 8. open with browser
 [http://localhost:3000/](http://localhost:3000/)
 
-## Book appointment with postman:
+## Step 9. Book appointment with postman:
 [https://documenter.getpostman.com/view/17726783/2s9Xxtxuw5](https://documenter.getpostman.com/view/17726783/2s9Xxtxuw5)
 ```
 POST localhost:3000/api/doctors/1/appointments
